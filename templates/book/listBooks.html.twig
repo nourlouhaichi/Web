@@ -1,0 +1,39 @@
+<a href="{{ path('add_form_book') }}">Book</a>
+<h1>List of Books</h1>
+{% set nb_published= 0 %}
+{% set nb_unpublished= 0 %}
+    {% if  tabBooks is empty%}
+   <h1>Not Found! </h1>
+    {% else %}
+<table border="1">
+    <tr>
+        <th>Reference</th>
+        <th>Title</th>
+        <th>Published</th>
+        <th>PublicationDate</th>
+        <th>Category</th>
+        <th>AuthorId</th>
+        <th>Actions</th>
+    </tr>
+    {% for i in tabBooks %}
+    {% if i.published == true %}
+    {% set  nb_published= nb_published+1 %}
+    {% else %}
+   {% set  nb_unpublished= nb_unpublished+1 %}
+   {% endif %}
+        <tr>
+            <td>{{ i.ref }}</td>
+            <td> {{ i.title }}</td>
+            <td>{{ i.published}}</td>
+            <td>{{ i.publicationDate|date('Y-m-d') }}</td>
+            <td>{{ i.category }}</td>
+            <td>{{ i.author }}</td>
+            <td><a href="{{ path('update_form_book', {'id': i.ref}) }}">Modifier</a>
+            <a href="{{ path('book_delete', {'id': i.ref}) }}">Supprimer</a></td>
+        </tr>
+    {% endfor %} 
+</table>   
+{% endif %}
+<h4>Nb_Books:  {{ tabBooks|length }}</h4>
+<h4>Nb_Published:  {{ nb_published }}</h4>
+<h4>Nb_Unpublished:  {{ nb_unpublished }}</h4>
