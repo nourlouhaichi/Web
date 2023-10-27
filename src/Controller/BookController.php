@@ -11,6 +11,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\BookType;
+use App\Form\SearchBookType;
 
 
 class BookController extends AbstractController
@@ -48,14 +49,6 @@ class BookController extends AbstractController
         $em->persist($book);
         $em->flush();
         return $this->redirectToRoute("books_list");   
-    }
-
-    ///READ findBooksByAuthor
-    #[Route('/listBook/{id}', name:'books_Author')]
-    public function listBookAuthor($id,BookRepository $reprository)
-    {
-        $books=$reprository->findBooksByAuthor($id);
-        return $this->render("book/listBooks.html.twig",array("tabBooks"=>$books));
     }
 
                 /***************************Form**************************/
@@ -107,6 +100,31 @@ class BookController extends AbstractController
             return $this->redirectToRoute('books_list');
         }
         return $this->renderForm("book/FormAddBook.html.twig",array("formulaireBook"=>$form));
+    }
+
+    //******************************************BONUS**************************************** */
+   
+    ///READ findBooksByAuthor
+    #[Route('/listBook/{id}', name:'books_Author')]
+    public function listBookAuthor($id,BookRepository $reprository)
+    {
+        $books=$reprository->findBooksByAuthor($id);
+        return $this->render("book/listBooks.html.twig",array("tabBooks"=>$books));
+    }
+
+
+    //AFFICHAGE AVEC RECHERCHE REF
+    #[Route('/listBooks2', name: 'list_book2')]
+    public function listBook2(BookRepository  $repository,Request $request)
+    {
+        $form= $this->createForm(SearchBookType::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted())
+        {
+           $value=  $form->getData()->getRef();
+           return $this->render("book/listBooks.html.twig",array('tabBooks'=>$repository->searchBook($value),'formSearch'=>$form->createView()));
+        }
+        return $this->render("book/listBooks.html.twig",array('tabBooks'=>$repository->findAll(),'formSearch'=>$form->createView()));
     }
 
 }

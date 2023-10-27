@@ -28,6 +28,16 @@ class AuthorRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function SearchAuthorDQL($min,$max)
+    {
+        $em=$this->getEntityManager();
+        return $em->createQuery(
+            'select a from App\Entity\Author a WHERE 
+        a.nb_books BETWEEN ?1 AND ?2')
+            ->setParameter(1,$min)
+            ->setParameter(2,$max)->getResult();
+    }
+
 //    /**
 //     * @return Author[] Returns an array of Author objects
 //     */
